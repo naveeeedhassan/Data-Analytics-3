@@ -1,0 +1,176 @@
+How AI Is Impacting Industries Worldwide
+By Stuart Rauch
+Last updated on Feb 23, 2023
+
+9179
+
+Table of Contents
+AI on the Fast Track
+IT Is a Big AI Beneficiary
+But AI Is Cross-enterprise Too
+Examples of Companies Taking the Lead in AI Adoption
+Impact of Artificial Intelligence in 2023
+
+View More
+A common goal among companies in today’s data-driven world is to become smarter—to know
+where the market opportunities lie, where supply chain logjams are and where process
+improvements can be found. Data science has been the fuel behind this trend, and now data
+science is itself becoming smarter. Thanks to astonishing advancements in artificial intelligence
+(AI) and its sub-segments machine learning and deep learning, companies are achieving new
+levels of efficiency in data analysis that impact their entire business. The rising tide of AI adoption across industries will drive significant growth in the next decade, with AI software
+revenue set to reach almost $90 billion by 2025. AI’s presence is tantalizing to data scientists
+and business managers alike who seek to let machines do the number crunching to make the
+business smarter on a holistic level.
+
+AI on the Fast Track
+A leading indicator of a market segment’s growth path can usually be found by following the
+money trail. Investors and venture capital (VC) firms are always looking for big growth
+opportunities, and they are finding one now in the AI business. Forbes recently reported that
+there has been a 14x increase in the number of active AI startups since 2000, and investment
+into these startups by VC firms has increased 6x in that period. Meanwhile, companies that both
+build and utilize AI applications are on a similar growth path, with jobs requiring AI skills
+increasing 4.5x since 2013. If you are looking to start your AI journey, then check out our AI &
+Machine Learning Bootcamp.
+
+IT Is a Big AI Beneficiary
+It should come as no surprise that the department that deals full-time with data—namely the IT
+organization—is perhaps the biggest beneficiary of AI’s capabilities. A Harvard Business Review
+study reports that between 34 and 44 percent of global companies they surveyed are using AI to
+help resolve employee technical support issues (imagine a smart response system to streamline
+common questions and troubleshoot others), automate internal system enhancements (machine
+codes can be used to calculate where bottlenecks can be fixed), and ensure that employees only
+use technology from approved vendors (picture a smart authorization engine that keeps up with
+daily updates and knows vendor subsidiaries and partners).
+
+Artificial Intelligence Engineer
+Your Gateway to Becoming a Successful AI Expert
+
+But AI Is Cross-enterprise Too
+Where else is AI finding a home? Among the most common examples of AI in the enterprise are
+image recognition and tagging, patient data processing, localization and mapping, predictive
+maintenance, predicting and thwarting security threats, and intelligent recruitment and HR
+management techniques. But perhaps the most active adoption is being seen in the marketing
+and sales operation, where intelligent use of data and the ability to learn from human interactions
+can produce big financial benefits. In a Statista worldwide survey, 87 percent of current AI
+adopters said they were using or considering using AI for sales forecasting and for improving email marketing. While sales forecasting is often automated by technology to a point, it can be
+vastly improved with an AI agent that monitors and reacts to customer interactions and shifting
+market patterns. Email marketers similarly can create a sense of one-to-one marketing through
+more intelligent targeting and content creation for various audiences.
+The bottom line is also important. McKinsey found that companies who benefit from AI
+initiatives and have invested in infrastructure to support its scale achieve a three to fifteen
+percentage point higher profit margin. Healthcare, financial services, and professional services
+are seeing the greatest increase in their profit margins as a result of AI adoption.
+
+Examples of Companies Taking the Lead in AI Adoption
+Here are a few examples of how specific companies in various industries are leveraging AI in
+their businesses:
+According to the McKinsey study, tech giants including Baidu and Google spent between $20B to
+$30B on AI in 2016, with 90 percent of this spent on R&D and deployment, and 10 percent on AI
+acquisitions. The current rate of AI investment is 3x external investment growth since 2013.
+Netflix has also achieved impressive results from the AI algorithm it uses to personalize
+recommendations to its 100 million subscribers worldwide, improving search results and
+avoiding canceled subscriptions from frustrated customers who couldn’t find what they wanted
+(with a potential impact of $1B annually).
+Financial data specialist Bloomberg uses techniques like computer vision and natural language
+processing to improve the breadth of information available through their ubiquitous terminals
+that financial staff use to access market information. Users can use natural language in queries
+instead of specialized technical commands which is analyzed and executed by AI
+
+instead of specialized technical commands, which is analyzed and executed by AI.
+Uber has a core team providing pre-packaged machine learning algorithms 'as-a-service' to its
+team of mobile app developers, map experts, and autonomous driving teams. These capabilities
+are used to better predict traveling habits and improve maps using computer vision, and to
+create algorithms for its autonomous vehicles.
+And Royal Bank of Scotland recently launched a natural language processing AI bot that will
+answer its banking customer questions and perform simple banking tasks such as money
+transfers, with the goal to make digital customer support as powerful as face-to-face interaction.
+AI and Machine Learning are revolutionizing the way companies access and process data to
+become smarter and more efficient organizations. And IT and data science teams are gearing up
+for the immense benefits of AI in their enterprises.
+
+Artificial Intelligence Engineer
+Your Gateway to Becoming a Successful AI Expert
+
+Impact of Artificial Intelligence in 2023
+The impact of artificial intelligence on modern culture are hotly contested. Others believe that AI
+positively impacts people's daily lives because it can perform mundane and even complex
+activities more efficiently and effectively than humans can. Yet some worry that AI will lead to
+increased levels of unemployment, invasion of privacy, and racial profiling.
+
+Can AI Replace Human Intelligence?
+The eventual takeover of humanity by AIs and our eventual extinction are not an impossibility.
+To assume that the current limitations of AIs in reasoning and decision-making are not
+
+indicative of their future capabilities.
+It's not out of the question that AI computers trained to respond appropriately to new
+situations would one day cease to need human supervision.
+Artificial intelligence has displaced human labour in today's factories and workshops. In the
+packing sector, for instance, machines have mostly taken over tasks that were once
+performed by hand.
+Artificial intelligence has mostly supplanted human workers in telemarketing and customer
+support. The constant availability and low barriers to entry of chatbots have made them
+popular in these sectors.
+
+Impact of AI
+Voice-Based Search
+The development of artificial intelligence (AI) has had a profound impact on nearly every area of
+human existence. One AI technology that benefits from AI's ability to streamline processes for its
+users is speech recognition. The latest innovation can transcribe your voicemails into text for
+you. It can also teach your speech to issue commands with your voice. As a result, Apple,
+Microsoft, Amazon, Google, Facebook, etc., have given this AI-powered speech recognition
+technology a lot of attention. Devices and software with built-in voice recognition are already
+commonplace; examples include Amazon's Echo, Apple's Siri, and Google's Home.
+AI In Healthcare
+The use of AI in healthcare has only recently begun. Machine learning (ML) offers promise in
+identifying trends within a population, similar to how computer vision (CV) can diagnose
+diseases using X-rays and NLP (natural language processing) can in medication safety. All of
+these advancements for patients will come together once we achieve real information
+interoperability, which supports the safe interchange of health data.
+The Impact of AI on Jobs
+Artificial intelligence (AI) will have future repercussions for your company. There is the possibility
+of a significant effect on how your business functions, yet there is no apparent downside. It calls
+for an optimistic outlook and an eagerness to try something new.
+Many sectors of the economy are experiencing profound shifts due to the advent of AI. When
+
+applied to commercial processes, AI's ability to recognise patterns and spot anomalies in
+massive volumes of digital information ushers new avenues of opportunity. It can perform a wide
+variety of everyday activities competently if trained.
+Employees are freed from mundane, repetitive work so they may focus on higher-level technical
+difficulties or enhance the quality of customer care made possible by the advent of AI.
+Business Intelligence
+Data produced by customers, tools, and procedures is overwhelming for businesses. People find
+that the standard business intelligence tools they've been using still need to cut it. Artificial
+intelligence-driven solutions will soon replace traditional methods like spreadsheets and
+dashboards. These instruments can automatically probe the data, learn insights, and make
+recommendations. These resources will transform how businesses leverage information and
+make decisions.
+Education
+An area where AI is expected to have a significant impact on education. AI will significantly
+assist the education sector and system, which needs a considerable overhaul. All that must be
+done is pinpoint what needs to change and lay out a plan for implementing that change. One
+factor that could prove to be a game-changer in this regard is the use of AI easy writer in creating
+a unique, practical, and practically applicable learning path for any subject or topic.
+Retail
+Artificial intelligence will have profound effects on the retail sector. Retailers will invest heavily in
+artificial intelligence (AI) to provide superior customer service in the following years. Marketers in
+the retail industry are anticipated to start using AR/VR capabilities. The popularity of interactive,
+aesthetically pleasing product catalogues, where the final consumer can try out an item before
+buying it, is predicted to skyrocket.
+
+Artificial Intelligence Engineer
+Your Gateway to Becoming a Successful AI Expert
+
+Final Thoughts
+The market for AI is growing steadily with no signs of slowing down. Artificial intelligence (AI)
+will be used in nearly every industry to streamline operations. Faster data retrieval and decisionmaking are two ways AI may help businesses expand.
+With multiple industry applications and future potential, AI and ML are currently the hottest
+markets for careers. If you want to jumpstart your career in this field, then we’ve got the perfect
+course to help you get started.Start your new AI and ML career today!
+
+
+About the Author
+
+Stuart Rauch
+
+
+

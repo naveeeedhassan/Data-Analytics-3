@@ -1,0 +1,344 @@
+---
+title: "FIT3152 Assignment 3"
+subtitle: "Muhammed Naveed Hassan (32799047)"
+output: html_notebook
+---
+
+```{r, include=FALSE}
+rm(list = ls())
+getwd()
+setwd('C:\\Users\\navee\\Desktop\\FIT3152\\A3')
+
+#Import Libraries
+library(slam)
+library(tm)
+library(SnowballC)
+library(proxy)
+library(igraph)
+library(cluster)
+```
+
+# **Report** 
+## **Q1: Documents**
+#### Chosen articles from topics of Technology, Environment, Health & Welness, Social Issue and Business & Economy
+#### **Technology**
+#### [1] How AI Is Impacting Industries Worldwide, Stuart Rauch
+#### [2] The Battle for Security: Why Cybersecurity is a Constant Challenge in the Digital Age, Pratiksha Pandit Engole
+#### [3] Cyber/Information Security in the Digital Age 
+#### **Environment**
+#### [4] Sustainable energy: the power of the future, State of Green
+#### [5] Renewable energy – powering a safer future, United Nations
+#### [6] Climate Impacts on Ecosystems, US EPA
+#### **Health and Wellness**
+#### [7] THE IMPORTANCE OF MENTAL HEALTH AWARENESS, Jean Holthaus
+#### [8] Why Mental Health Awareness Is Important, Launch Centers
+#### [9] Five amazing health research breakthroughs in the last 12 months, NICR
+#### **Social Issues**
+#### [10] Causes and Effects of Poverty, CliffsNotes
+#### [11] Consequences of Poverty, StudySmarter
+#### [12] The Importance of Education in Empowering Marginalized Communities, SAS Foundation
+#### **Business and Economy**
+#### [13] Successful entrepreneurs whose ventures began in living rooms and garages, The CEO Magazine
+#### [14] GIG ECONOMY TRENDS 2023, Mark Stiltner 
+#### [15] How does the gig economy shape the future of work?, Oksana Lavri, HRForecast
+
+
+## **Q2: Create Corpus**
+#### To create the corpus, a simple process was followed to convert each document into a text format. Since the original material collected was in PDFs, the "export" or "save as" functions in the respective software were utilized to convert them into plain text format. This ensured that the extracted text maintained the original content of the articles. After converting each document, they were organized into a folder containing 15 text files, with suitable identifiers in the file names using document IDs for easy recognition and reference in subsequent analysis steps, such as clustering or network graphs.
+```{r, include=FALSE}
+# store the path to directory "Articles" 
+cname = file.path(".", "Articles")
+cname
+# names of files and subdirectories within the specified directory
+print(dir(cname))
+# Create Corpus
+docs <- Corpus(DirSource(cname))
+```
+
+## **Q3: Text processing steps**
+#### Firstly, numbers were removed from the text as they don't contribute much to the overall meaning. Next, punctuations were removed to avoid their interference in the analysis. Then, the text was transformed to lowercase to ensure consistency in word representation. White spaces were also removed to further clean the text. Additionally, all non-alphanumeric characters, such as special symbols or artifacts from the original formatting, were eliminated to focus on meaningful words. To reduce the dimensionality of the DTM, stemming was applied to consolidate words with similar roots. Lastly, sparse terms that appeared infrequently were removed to maintain a more concise and meaningful DTM. The aim was to achieve an approximate number of 20 tokens, which required some trial-and-error experimentation to strike the right balance between preserving key words and eliminating irrelevant or less informative terms.
+```{r, include=FALSE}
+# Tokenisation
+# Remove Numbers
+docs <- tm_map(docs, removeNumbers)
+# Remove Punctuation
+docs <- tm_map(docs, removePunctuation)
+# Transform to lower case
+docs <- tm_map(docs, content_transformer(tolower))
+# Remove White space
+docs <- tm_map(docs, stripWhitespace)
+docs <- tm_map(docs, removeWords, stopwords("english"))
+# remove all non-alphanumeric characters
+docs <- tm_map(docs, content_transformer(function(x) gsub("[^A-Za-z0-9]", " ", x)))
+
+# Stemming for similar words
+docs <- tm_map(docs, stemDocument, language = "english")
+# Create DTM
+dtm <- DocumentTermMatrix(docs)
+# Removing Sparse Terms
+dtm <- removeSparseTerms(dtm, sparse = 0.30)
+# Convert to data frame
+dtm = as.data.frame(as.matrix(dtm))
+# Write into csv file
+write.csv(dtm, "dtm.csv")
+```
+#### Through Trial and error testing, we ultimately came up with a DTM of 19 tokens.
+
+## **Q4: Hierarchical clustering of corpus**
+#### Hierarchical clustering is performed on the documents using cosine distance as the dissimilarity measure. Cosine distance is commonly used when analyzing textual data, as it captures the similarity between documents based on the angle between their corresponding feature vectors.
+#### By using cosine distance instead of traditional distance measures, hierarchical clustering based on cosine distance takes into account the semantic similarity between documents. It considers the overlap of terms and their frequencies, rather than their exact values. It can identify groups of documents that share common themes, topics, or content. This allows for a more meaningful and interpretable clustering of the corpus.
+```{r, echo=FALSE}
+# Calculate the cosine distance matrix
+cos_dist_matrix <- dist(dtm, method = "cosine")
+
+# Perform hierarchical clustering using cosine distance
+hc_cosine <- hclust(cos_dist_matrix)
+
+# Plot the dendrogram
+plot(hc_cosine, main = "Hierarchical Clustering Dendrogram (Cosine Distance)")
+
+
+cluster_assignments <- cutree(hc_cosine, k = 14) 
+
+# Calculate the Dunn index
+dunn_index <- cluster.stats(cos_dist_matrix, cluster_assignments)$dunn
+
+cat("Dunn Index:", dunn_index, "\n")
+```
+### **Qualitative Analysis**
+#### We can see that the clustering is good as the related documents are close together. For example: The 2 articles on Gig Economy are under one branch and CyberSecurity & AI under their own branch.
+#### The documents are clustered appropriately to identify common themes, topics, or trends.
+
+### **Quantitative Analysis**
+#### The Dunn Index of 1.113255 suggests that the clusters are well-separated and internally compact. There is minimal overlap between clusters, indicating distinct and cohesive grouping of documents. 
+#### We can conclude that the hierarchical clustering has been effective in organizing the documents into meaningful and distinct groups.
+
+## **Q5: Single-mode network**
+#### Single-mode networks are useful for exploring document/document or token/token similarity, detecting influential or central documents/tokens, understanding the thematic structure of the corpus, and identifying clusters or groups of related documents or tokens.
+#### In a single-mode network of documents, each document is represented as a node, and the connections or edges between nodes indicate some form of relationship or similarity between the documents.
+```{r, echo=FALSE}
+dtmBinary = as.matrix(dtm)
+# convert to binary matrix
+dtmBinary = as.matrix((dtmBinary > 0) + 0)
+# multiply binary matrix by its transpose
+ByAbsMatrix = dtmBinary %*% t(dtmBinary)
+# make leading diagonal zero
+diag(ByAbsMatrix) = 0
+
+# Create Abstract Matrix
+ByAbs = graph_from_adjacency_matrix(ByAbsMatrix,
+mode = "undirected", weighted = TRUE)
+# Plot Abstract Matrix
+plot(ByAbs)
+
+format(closeness(ByAbs), digits = 2)
+
+# Identify central documents based on node centrality measures (e.g. degree centrality)
+central_documents <- degree(ByAbs, mode = "all")
+
+# Identify communities within the network
+communities <- cluster_walktrap(ByAbs)
+
+central_documents
+communities
+
+# Improved Graph
+plot(ByAbs, layout = layout_with_fr, vertex.label = V(ByAbs)$name, vertex.size = degree(ByAbs), 
+     vertex.color = membership(communities), 
+     main = "Document Network with Communities")
+```
+#### Based on the centrality measures of the documents in the network, the central documents are all the articles with centrality measures varying from 0.0058 to 0.0123. It suggests that there are similarities and connections between the documents, indicating a common theme or topic across the corpus. The clustering algorithm has identified a single group (group 1) in the network. These documents are clustered together, indicating that they share similar characteristics or topics based on the number of shared terms in the network.
+
+
+## **Q6: Tokens**
+#### In a single-mode network of tokens, each token or word in the corpus is represented as a node, and the edges represent relationships between tokens based on their co-occurrence patterns or semantic similarities. This type of network can provide insights into the associations between different tokens and help identify clusters or groups of related words.
+```{r, echo=FALSE}
+dtmTokens = as.matrix(dtm)
+# convert to binary matrix
+dtmTokens = as.matrix((dtmTokens > 0) + 0)
+# multiply transpose binary matrix by binary matrix
+ByTokenMatrix = t(dtmTokens) %*% dtmTokens
+# make leading diagonal zero
+diag(ByTokenMatrix) = 0
+ByAbs2 = graph_from_adjacency_matrix(ByTokenMatrix,
+mode = "undirected", weighted = TRUE)
+plot(ByAbs2)
+
+# Identify central documents based on node centrality measures (e.g. degree centrality)
+central_tokens <- degree(ByAbs2, mode = "all")
+
+# Identify communities within the network
+communitiesTokens <- cluster_walktrap(ByAbs2)
+
+central_tokens
+communities
+
+# Improved Graph
+plot(ByAbs2, layout = layout_with_fr, vertex.label = V(ByAbs2)$name, vertex.size = degree(ByAbs2), vertex.color = membership(communitiesTokens), 
+     main = "Token Network with Communities (Improved Graph)")
+```
+#### These central tokens appear 17 times and are considered important or central in the network. They likely represent common words or concepts that are shared across multiple documents in the corpus.
+#### These tokens are clustered together, indicating that they share similar characteristics or topics based on the number of shared terms in the network.
+
+
+## **Q7: Bipartite (two-mode) network of corpus**
+#### The bipartite network provides a visual representation of the associations between documents and tokens in the corpus. It allows us to observe patterns of token occurrence across different documents and identify common themes or topics that emerge from the shared tokens. By analyzing the structure of the network, we can gain insights into the relationships between documents and tokens and uncover important connections within the corpus.
+
+```{r, echo=FALSE}
+# clone DTM
+dtmsa = as.data.frame(dtm) 
+# add row names
+dtmsa$ABS = rownames(dtmsa) 
+dtmsb = data.frame()
+# use for loops to write into data frame
+for (i in 1:nrow(dtmsa)){
+  for (j in 1:(ncol(dtmsa)-1)){
+    touse = cbind(dtmsa[i,j], dtmsa[i,ncol(dtmsa)], colnames(dtmsa[j]))
+    dtmsb = rbind(dtmsb, touse ) } } # close loops
+# rename columns
+colnames(dtmsb) = c("weight", "abs", "token")
+# delete 0 weights
+dtmsc = dtmsb[dtmsb$weight != 0,] 
+dtmsc = dtmsc[,c(2,3,1)]
+
+# Bipartite mapping
+g <- graph.data.frame(dtmsc, directed=FALSE)
+bipartite.mapping(g)
+V(g)$type <- bipartite_mapping(g)$type
+V(g)$color <- ifelse(V(g)$type, "lightblue", "salmon")
+V(g)$shape <- ifelse(V(g)$type, "circle", "square")
+E(g)$color <- "grey"
+
+# Adjusting the margins as needed
+par(mar = c(2, 2, 2, 2)) 
+
+# Plot the bipartite network
+plot(g, vertex.size = 10, vertex.label.dist = 1.5, vertex.label.cex = 0.8,
+     vertex.color = V(g)$color, vertex.shape = V(g)$shape, edge.color = E(g)$color, main = "Improved Bipartite Network")
+legend("topleft", legend = c("Token", "Document"), pch = c(16, 15),
+       col = c("lightblue", "salmon"), pt.cex = 1.5, cex = 0.8, box.lwd = 0)
+
+```
+#### This bipartite network of the corpus helps us understand the interplay between documents and the tokens they contain. It can be used to identify key tokens that appear across multiple documents, explore document similarity based on shared tokens, and analyze the overall structure and characteristics of the corpus. This representation offers a valuable tool for exploring and understanding the relationships within a document collection.
+```{r, echo =FALSE}
+# Calculate degree centrality
+degree_centrality <- degree(g, mode = "in")
+degree_centrality
+```
+#### The given information represents a set of documents and their corresponding frequencies or weights in a bipartite network.
+#### Example:
+#### Document A1 (AI.txt) has a weight of 18. Document A10 (Poverty.txt) has a weight of 13. Document A11 (Poverty.txt) also has a weight of 15.
+#### Similarly, the subsequent lines represent the frequencies of tokens (words or concepts) in the corpus. Each token is followed by its frequency in different documents. Example: The token "also" has a frequency of 13 across the corpus. The token "can" has a frequency of 14. The token "develop" has a frequency of 11. These frequency values indicate the importance or prevalence of documents and tokens within the bipartite network. 
+
+```{r, echo=FALSE}
+betweenness_centrality <- betweenness(g)
+betweenness_centrality
+```
+#### Betweenness centrality is a measure used in network analysis to quantify the importance or influence of a node within a network based on its position in connecting other nodes. Example: Node A1 (AI.txt) has a betweenness centrality value of 19.0150253. Node A10 (Poverty.txt) has a betweenness centrality value of 13.0309524. Node A11 (Poverty.txt) has a betweenness centrality value of 23.4471320. These betweenness centrality values indicate the extent to which a document (node) serves as a bridge or mediator in connecting other documents within the network. Higher betweenness centrality values suggest that the corresponding document plays a crucial role in the flow of information or connections between other documents. Nodes with higher betweenness centrality are considered more influential or important in maintaining the overall connectivity and communication within the network.
+
+
+#### Similarly, betweenness centrality values are also provided for tokens (words or concepts) within the network. These values reflect the importance or centrality of tokens in connecting different documents.Example: The token "also" has a betweenness centrality value of 12.8783189. The token "can" has a betweenness centrality value of 0.0000000. The token "develop" has a betweenness centrality value of 8.2730159. These betweenness centrality values for tokens indicate their significance in bridging different documents or facilitating the flow of information between them. Tokens with higher betweenness centrality contribute more to the overall connectivity and influence of the network by connecting diverse documents or topics.
+
+
+
+
+
+## **Q8: Summary**
+## Summary & Comparison of Clustering & Network Analysis
+#### Clustering and network analysis are two powerful techniques used to gain insights from a document corpus. In the case of clustering, the utilization of cosine distance instead of traditional distance measures allows for the consideration of semantic similarity between documents. This approach takes into account the overlap of terms and their frequencies, resulting in meaningful and interpretable clusters that capture common themes, topics, or content. The effectiveness of the clustering is evident as related documents are grouped closely together, demonstrating the algorithm's ability to capture underlying relationships. The Dunn Index further supports the quality of the clustering by indicating well-separated and internally compact clusters with minimal overlap. Consequently, the hierarchical clustering approach successfully organizes the documents into distinct and cohesive groups.
+
+#### On the other hand, network analysis offers a different perspective by focusing on the centrality measures of documents in the network. The central documents, identified through their high centrality values ranging from 0.0058 to 0.0123, indicate similarities and connections among them, suggesting a common theme or topic across the corpus. These central documents represent important nodes in the network, and the central tokens they share (appearing 17 times) likely represent common words or concepts that are significant within the corpus. The clustering of these central documents in the network further emphasizes their similarity and indicates shared characteristics or topics based on the number of shared terms.
+
+#### In comparison, clustering and network analysis provide complementary insights into the document corpus. Clustering delves into the semantic similarity between documents, uncovering groups with shared themes or topics. It captures the internal structure and relationships within the corpus, allowing for a detailed exploration of document similarity. On the other hand, network analysis zooms out to examine the centrality and connectivity of documents. It highlights the central documents and important concepts shared across the corpus, providing a  perspective on the relationships and influential elements. Both approaches contribute to a comprehensive understanding of the corpus, with clustering revealing detailed similarities and network analysis highlighting central documents and shared concepts.
+
+#### In conclusion, clustering and network analysis are powerful techniques that offer unique perspectives on a document corpus. The use of cosine distance in clustering enhances its ability to capture semantic similarity, resulting in meaningful and interpretable clusters. Meanwhile, network analysis identifies central documents and shared concepts, shedding light on important elements and relationships within the corpus. Together, these approaches provide a comprehensive understanding of the relationships, themes, and influential elements within the document corpus, allowing for deeper insights and informed decision-making.
+
+
+## **Conclusion**
+#### The project involved several steps to analyze a corpus of text documents. The corpus was created by converting each document into a text format, using export or save functions in the respective software. The documents were organized into a folder with suitable identifiers for easy reference.
+
+#### Text processing steps were applied to the corpus, including the removal of numbers and punctuations, transformation to lowercase, elimination of white spaces and non-alphanumeric characters, stemming, and removal of sparse terms. These steps aimed to create a Document-Term Matrix (DTM) with approximately 20 tokens, striking a balance between preserving key words and eliminating irrelevant terms.
+
+#### Hierarchical clustering using Cosine Distance was performed to explore the similarity between documents. The resulting dendrogram provided insights into the clustering patterns and relationships among the documents.
+
+#### A single-mode network was constructed based on the number of shared terms between documents. This network visualization highlighted connections and central documents within the corpus.
+
+#### Various visualizations were utilized throughout the analysis, customizing colors, sizes, widths, and positions to enhance the interpretability of the results.
+
+#### In the bipartite network of the corpus, we can observe two distinct groups: the documents and the tokens. The connections between the documents and tokens are based on the number of shared terms. This network representation provides insights into the relationship between the documents and the important tokens that appear frequently across them.
+
+#### The graph shows that certain documents share common tokens, indicating similarity in content or topic. This suggests that there are specific themes or topics that are prevalent across multiple documents. The size and width of the connections between the documents and tokens can also provide information about the strength of the relationship.
+
+#### By analyzing the bipartite network, we can identify the most important (central) documents based on their connections to a large number of tokens. These central documents have a higher degree of connectivity, indicating their significance in the corpus. Understanding the central documents can provide insights into the key topics or themes discussed in the collection of documents.
+
+#### Overall, the bipartite network allows us to visualize the relationships between documents and tokens, providing a deeper understanding of the corpus structure and highlighting important documents and tokens in the analysis.
+
+#### Overall, the project encompassed corpus creation, text processing, hierarchical clustering, and network analysis to gain insights into the document collection. The analysis revealed meaningful patterns, relationships, and important nodes within the data.
+
+
+# **Appendix**
+# **Q2**: summary of corpus
+```{r, echo=FALSE}
+print(summary(docs))
+```
+
+# **Q3**: Document-Term Matrix
+```{r, echo=FALSE}
+dtm
+```
+# **Q4**: Cosine Distance Matrix
+```{r, echo=FALSE}
+cos_dist_matrix <- as.data.frame(as.matrix(cos_dist_matrix))
+cos_dist_matrix
+```
+
+# **Q5**: Abstract Matrix
+```{r, echo = FALSE}
+ByAbsMatrix <- data.frame(ByAbsMatrix)
+ByAbsMatrix
+```
+
+
+# **Q6**: Token Matrix
+```{r, echo = FALSE}
+ByTokenMatrix <- data.frame(ByTokenMatrix)
+ByTokenMatrix
+```
+# **Q7**: Two Mode Network
+```{r, echo = FALSE}
+dtmsc
+```
+# **References**
+#### [1] Rauch, S. (2023) How AI is Impacting Industries Worldwide?: Simplilearn, Simplilearn.com. Available at: <https://www.simplilearn.com/ai-artificial-intelligence-impact-worldwide-article#:~:text=Artificial%20intelligence%20(AI)%20will%20be,the%20hottest%20markets%20for%20careers> (Accessed: 07 June 2023).
+
+#### [2] Engole, P.P., The battle for security: Why cybersecurity is a constant challenge in the Digital age, Cybersecurity: A Constant Battle in the Digital Age. Available at: https://www.linkedin.com/pulse/battle-security-why-cybersecurity-constant-challenge-digital-engole (Accessed: 07 June 2023).
+
+#### [3] Cyber/Information Security in the Digital age (no date) Center For Digital Strategies. Available at: https://digitalstrategies.tuck.dartmouth.edu/publication/cyberinformation-security-digital-age/ (Accessed: 07 June 2023). 
+
+#### [4] Sustainable energy: The power of the future (2022) State of Green. Available at: https://stateofgreen.com/en/news/powering-our-future-with-sustainable-energy/ (Accessed: 07 June 2023). 
+
+#### [5] Renewable energy – powering a safer future (no date) United Nations. Available at: https://www.un.org/en/climatechange/raising-ambition/renewable-energy (Accessed: 07 June 2023). 
+
+#### [6] Climate impacts on ecosystems (2016) EPA. Available at: https://19january2017snapshot.epa.gov/climate-impacts/climate-impacts-ecosystems_.html (Accessed: 07 June 2023). 
+
+#### [7] The importance of Mental Health Awareness (2022) Pine Rest Newsroom. Available at: https://www.pinerest.org/newsroom/articles/mental-health-awareness-blog/ (Accessed: 07 June 2023). 
+
+#### [8] Admin (2023) Mental Health Awareness is important: Launch Centers: Los Angeles, Launch Centers. Available at: https://launchcenters.com/why-mental-health-awareness-is-important/ (Accessed: 07 June 2023). 
+
+
+#### [9] Five Amazing Health Research Breakthroughs in the last 12 months Available at: https://bepartofresearch.nihr.ac.uk/Articles/Health-research-breakthroughs/ (Accessed: 07 June 2023). 
+
+#### [10] Sociology, CliffsNotes. Available at: https://www.cliffsnotes.com/study-guides/sociology/social-and-global-stratification/causes-and-effects-of-poverty (Accessed: 07 June 2023). 
+
+#### [11] Consequences of poverty, StudySmarter UK. Available at: https://www.studysmarter.co.uk/explanations/social-studies/work-poverty-and-welfare/consequences-of-poverty/ (Accessed: 07 June 2023). 
+
+#### [12] SAS Foundation, The importance of education in empowering marginalized communities, LinkedIn. Available at: https://www.linkedin.com/pulse/importance-education-empowering-marginalized (Accessed: 07 June 2023). 
+
+#### [13] Batchelor, M., Entrepreneur success stories that took off in living rooms and garages, The CEO Magazine. Available at: https://www.theceomagazine.com/business/start-ups-entrepreneurs/entrepreneur-success-stories/ (Accessed: 07 June 2023). 
+
+#### [14] Gig economy trends 2023 (2023) Rapyd. Available at: https://www.rapyd.net/blog/gig-economy-trends-2023/ (Accessed: 07 June 2023). 
+
+#### [15] Oksana LavriFuture work (2023) Why is the gig economy a future of work?, HRForecast. Available at: https://hrforecast.com/what-is-the-gig-economy-and-why-is-it-the-future-of-work/ (Accessed: 07 June 2023). 
+
+
+
